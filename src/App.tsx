@@ -217,7 +217,7 @@ function App() {
   return (
     <div className=" flex flex-col max-h-dvh ">
       <Navbar />
-      <div className="flex self-center w-11/12 flex-col  gap-4  p-4 md:py-8 max-w-2xl max-h-full overflow-y-auto">
+      <div className="flex self-center w-full flex-col  gap-4  p-4 md:py-8 max-w-2xl max-h-full overflow-y-auto">
         <div className="flex gap-4">
           <div className="w-full">
             <Select defaultValue={baseUrl} onValueChange={setBaseUrl}>
