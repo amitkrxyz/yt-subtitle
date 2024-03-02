@@ -10,6 +10,8 @@ import {
   SelectTrigger,
 } from "./components/ui/select";
 import { SelectValue } from "@radix-ui/react-select";
+import ytsub from "./assets/ytsub.svg";
+import { Navbar } from "./components/Navbar";
 
 type InstanceResponse = [string, InstanceProperty];
 
@@ -214,90 +216,95 @@ function App() {
   }, [baseUrl]);
 
   return (
-    <div className="flex max-h-dvh flex-col gap-4 mx-auto p-4 md:py-8  max-w-2xl">
-      <div className="flex gap-4">
-        <div className="w-full">
-          <Select defaultValue={baseUrl} onValueChange={setBaseUrl}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select an Instance" />
-            </SelectTrigger>
-            <SelectContent>
-              {instanceList?.map((instance) => (
-                <SelectItem key={instance} value={instance}>
-                  {instance.toString()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <Input
-        placeholder="Enter YouTube Video URL"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        type="text"
-      />
-      <div className="flex gap-4">
-        <div className="w-28">
-          <Select defaultValue="txt" onValueChange={setCaptionFormat}>
-            <SelectTrigger>
-              <SelectValue placeholder="Format" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={"vtt"}>vtt</SelectItem>
-              <SelectItem value={"txt"}>Text</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button className="flex-grow" onClick={handleSearch}>
-          Search Subtitle
-          {searchLoading && (
-            <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />
-          )}
-        </Button>
-        <Button className="" onClick={resetFormAll} variant={"destructive"}>
-          Reset
-        </Button>
-      </div>
-      {captionsRes && (
+    <div className=" flex flex-col max-h-dvh ">
+      <Navbar />
+      <div className="flex self-center w-11/12 flex-col  gap-4  p-4 md:py-8 max-w-2xl max-h-full overflow-y-auto">
         <div className="flex gap-4">
-          <Select onValueChange={setCaptionUrl}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Language" />
-            </SelectTrigger>
-            <SelectContent>
-              {captionsRes?.map((c, i) => (
-                <SelectItem key={i} value={c.url}>
-                  {c.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button
-            className="w-40"
-            disabled={!captionUrl}
-            onClick={() => getCaption(captionUrl!)}
-          >
-            Submit
-            {getLoading && <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />}
+          <div className="w-full">
+            <Select defaultValue={baseUrl} onValueChange={setBaseUrl}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an Instance" />
+              </SelectTrigger>
+              <SelectContent>
+                {instanceList?.map((instance) => (
+                  <SelectItem key={instance} value={instance}>
+                    {instance.toString()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <Input
+          placeholder="Enter YouTube Video URL"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          type="text"
+        />
+        <div className="flex gap-4">
+          <div className="w-28">
+            <Select defaultValue="txt" onValueChange={setCaptionFormat}>
+              <SelectTrigger>
+                <SelectValue placeholder="Format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={"vtt"}>vtt</SelectItem>
+                <SelectItem value={"txt"}>Text</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button className="flex-grow" onClick={handleSearch}>
+            Search Subtitle
+            {searchLoading && (
+              <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />
+            )}
+          </Button>
+          <Button className="" onClick={resetFormAll} variant={"destructive"}>
+            Reset
           </Button>
         </div>
-      )}
-      {message && (
-        <pre className="flex-grow whitespace-pre-wrap p-4 overflow-y-auto border rounded relative">
-          {captionText && (
-            <div className="sticky flex  pb-4 gap-2 justify-end top-0 ">
-              <Button onClick={downloadCaption} variant={"outline"}>
-                <DownloadIcon />
-              </Button>
-              <Button onClick={copyCaption} variant={"outline"}>
-                <ClipboardIcon />
-              </Button>
-            </div>
-          )}
-          {message}
-        </pre>
-      )}
+        {captionsRes && (
+          <div className="flex gap-4">
+            <Select onValueChange={setCaptionUrl}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent>
+                {captionsRes?.map((c, i) => (
+                  <SelectItem key={i} value={c.url}>
+                    {c.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              className="w-40"
+              disabled={!captionUrl}
+              onClick={() => getCaption(captionUrl!)}
+            >
+              Submit
+              {getLoading && (
+                <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />
+              )}
+            </Button>
+          </div>
+        )}
+        {message && (
+          <pre className="whitespace-pre-wrap p-4 overflow-y-scroll border rounded-s-lg relative">
+            {captionText && (
+              <div className="sticky flex  pb-4 gap-2 justify-end top-0 ">
+                <Button onClick={downloadCaption} variant={"outline"}>
+                  <DownloadIcon />
+                </Button>
+                <Button onClick={copyCaption} variant={"outline"}>
+                  <ClipboardIcon />
+                </Button>
+              </div>
+            )}
+            {message}
+          </pre>
+        )}
+      </div>
     </div>
   );
 }
