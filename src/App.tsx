@@ -10,7 +10,6 @@ import {
   SelectTrigger,
 } from "./components/ui/select";
 import { SelectValue } from "@radix-ui/react-select";
-import ytsub from "./assets/ytsub.svg";
 import { Navbar } from "./components/Navbar";
 
 type InstanceResponse = [string, InstanceProperty];
