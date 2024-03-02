@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { Button } from "./components/ui/button";
 import { Input } from "./components/ui/input";
-import { ReloadIcon, ClipboardIcon, DownloadIcon, } from "@radix-ui/react-icons";
+import { ReloadIcon, ClipboardIcon, DownloadIcon } from "@radix-ui/react-icons";
 import {
   Select,
   SelectContent,
@@ -30,14 +30,12 @@ type InstanceProperty = {
 };
 
 function App() {
-  const [baseUrl, setBaseUrl] = useState<string>(
-    "invidious.einfachzocken.eu",
-  );
+  const [baseUrl, setBaseUrl] = useState<string>("invidious.einfachzocken.eu");
   const [instanceList, setInstanceList] = useState<string[]>([baseUrl]);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [captionFormat, setCaptionFormat] = useState<string>("txt");
   const [input, setInput] = useState("");
-  const [videoId, setVideoId] = useState<string | undefined>(undefined)
+  const [videoId, setVideoId] = useState<string | undefined>(undefined);
   const [searchLoading, setSearchLoading] = useState(false);
   const [getLoading, setGetLoading] = useState(false);
   const [captionsRes, setCaptionsRes] = useState<CaptionObject[] | undefined>(
@@ -54,7 +52,7 @@ function App() {
       return p.type == "https" && p.cors === true && p.api === true;
     });
 
-    const newInstanceList = newInstances.map(instance => instance[0])
+    const newInstanceList = newInstances.map((instance) => instance[0]);
     setInstanceList(newInstanceList);
   }
   useEffect(() => {
@@ -78,7 +76,7 @@ function App() {
 
   function extractPlainTextFromVtt(vttText: string) {
     // Split the VTT text by line breaks
-    const lines = vttText.split('\n');
+    const lines = vttText.split("\n");
 
     // Initialize an empty array to store the plain text content
     let plainText = [];
@@ -87,7 +85,11 @@ function App() {
     // Skip first 3 lines
     for (let i = 3; i < lines.length; i++) {
       // Check if the line contains a timestamp
-      if (/^\d{2}:\d{2}:\d{2}.\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}.\d{3}/.test(lines[i])) {
+      if (
+        /^\d{2}:\d{2}:\d{2}.\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}.\d{3}/.test(
+          lines[i],
+        )
+      ) {
         // Skip this line as it contains a timestamp
         continue;
       }
@@ -99,11 +101,11 @@ function App() {
       // }
 
       // Remove any leading or trailing whitespace
-      const line = lines[i].replace(/&nbsp;/g, ' ').trim()
+      const line = lines[i].replace(/&nbsp;/g, " ").trim();
 
       // Check if line is empty
       if (!line) {
-        continue
+        continue;
       }
 
       // Add the line to the plain text content array
@@ -111,7 +113,7 @@ function App() {
     }
 
     // Join the plain text content array into a single string
-    return plainText.join(' ');
+    return plainText.join(" ");
   }
 
   async function getCaption(url: string) {
@@ -121,7 +123,7 @@ function App() {
       const text = await res.text();
       setCaptionText(text);
     } catch (error) {
-      setMessage("Error fetching subtitles! try chaning instance")
+      setMessage("Error fetching subtitles! try chaning instance");
     }
     setGetLoading(false);
   }
@@ -133,7 +135,7 @@ function App() {
       const captionsRes: CaptionsResponse = await res.json();
       setCaptionsRes(captionsRes.captions);
     } catch (error) {
-      setMessage("Error! Check Video URL or try changing instance")
+      setMessage("Error! Check Video URL or try changing instance");
     }
     // const captionUrl = captionsRes.captions[0].url
     // getCaption(captionUrl)
@@ -141,72 +143,75 @@ function App() {
   }
 
   function resetFormAll() {
-    setInput("")
-    resetForm()
+    setInput("");
+    resetForm();
   }
 
   function resetForm() {
     setCaptionsRes(undefined);
-    setCaptionUrl(undefined)
+    setCaptionUrl(undefined);
     setCaptionText(undefined);
-    setMessage("")
+    setMessage("");
   }
 
   function handleSearch() {
-    resetForm()
-    const currVideoId = parseVideoId(input)
+    resetForm();
+    const currVideoId = parseVideoId(input);
     if (!currVideoId) {
-      setMessage("Invalid Video URL")
-      return
+      setMessage("Invalid Video URL");
+      return;
     }
-    setVideoId(currVideoId)
-    listCaption(currVideoId)
+    setVideoId(currVideoId);
+    listCaption(currVideoId);
   }
   function parseVideoId(text: string) {
     if (/^[-_a-zA-Z0-9]{11}$/.test(text)) {
-      return text
+      return text;
     }
 
-    var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var regExp =
+      /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = text.match(regExp);
     if (match && match[2].length == 11) {
       return match[2];
     } else {
-      return null
+      return null;
     }
   }
   async function writeClipboardText(text: string) {
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(text);
     } catch (error) {
-      throw Error(error as string)
+      throw Error(error as string);
     }
   }
 
   function copyCaption() {
     if (message) {
-      writeClipboardText(message).then(() => {
-        alert("Copied successfully")
-      }).catch((err) => {
-        console.error(err)
-        alert(err)
-      })
+      writeClipboardText(message)
+        .then(() => {
+          alert("Copied successfully");
+        })
+        .catch((err) => {
+          console.error(err);
+          alert(err);
+        });
     }
   }
 
   function downloadCaption() {
-    if (!message) return
-    const element = document.createElement("a")
-    const file = new Blob([message], { type: 'text/plain' })
-    element.href = URL.createObjectURL(file)
-    element.download = `${videoId}.${captionFormat}`
-    document.body.appendChild(element)
-    element.click()
+    if (!message) return;
+    const element = document.createElement("a");
+    const file = new Blob([message], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = `${videoId}.${captionFormat}`;
+    document.body.appendChild(element);
+    element.click();
   }
 
   useEffect(() => {
-    console.log("Base url changed", baseUrl)
-  }, [baseUrl])
+    console.log("Base url changed", baseUrl);
+  }, [baseUrl]);
 
   return (
     <div className="flex max-h-dvh flex-col gap-4 mx-auto p-4 md:py-8  max-w-2xl">
@@ -229,14 +234,12 @@ function App() {
       <Input
         placeholder="Enter YouTube Video URL"
         value={input}
-        onChange={e => setInput(e.target.value)}
+        onChange={(e) => setInput(e.target.value)}
         type="text"
       />
       <div className="flex gap-4">
         <div className="w-28">
-          <Select
-            defaultValue="txt"
-            onValueChange={setCaptionFormat}>
+          <Select defaultValue="txt" onValueChange={setCaptionFormat}>
             <SelectTrigger>
               <SelectValue placeholder="Format" />
             </SelectTrigger>
@@ -248,9 +251,11 @@ function App() {
         </div>
         <Button className="flex-grow" onClick={handleSearch}>
           Search Subtitle
-          {searchLoading && <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />}
+          {searchLoading && (
+            <ReloadIcon className="w-4 h-4 ml-2 animate-spin" />
+          )}
         </Button>
-        <Button className="" onClick={resetFormAll} variant={'destructive'}>
+        <Button className="" onClick={resetFormAll} variant={"destructive"}>
           Reset
         </Button>
       </div>
@@ -279,13 +284,17 @@ function App() {
         </div>
       )}
       {message && (
-        <pre className="flex-grow whitespace-pre-wrap p-4  overflow-y-auto border rounded relative">
-          {captionText &&
+        <pre className="flex-grow whitespace-pre-wrap p-4 overflow-y-auto border rounded relative">
+          {captionText && (
             <div className="sticky flex  pb-4 gap-2 justify-end top-0 ">
-              <Button onClick={downloadCaption} variant={"outline"}><DownloadIcon /></Button>
-              <Button onClick={copyCaption} variant={"outline"}><ClipboardIcon /></Button>
+              <Button onClick={downloadCaption} variant={"outline"}>
+                <DownloadIcon />
+              </Button>
+              <Button onClick={copyCaption} variant={"outline"}>
+                <ClipboardIcon />
+              </Button>
             </div>
-          }
+          )}
           {message}
         </pre>
       )}
