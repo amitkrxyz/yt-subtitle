@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    permisssions:
+    permissions:
       contents: write
     runs-on: ubuntu-latest
 
