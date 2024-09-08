@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build static files
-    - uses: oven-sh/setup-bun@v2
+      uses: oven-sh/setup-bun@v2
     - run: bun install
     - run: bun run build
 
