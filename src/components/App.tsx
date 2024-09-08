@@ -30,9 +30,11 @@ type InstanceProperty = {
 	type: "https" | "i2p" | "onion";
 };
 
+const DEFAULT_INSTANCE = "invidious.privacyredirect.com"
+
 
 function App() {
-	const [baseUrl, setBaseUrl] = useState<string>("invidious.einfachzocken.eu");
+	const [baseUrl, setBaseUrl] = useState<string>(DEFAULT_INSTANCE);
 	const [instanceList, setInstanceList] = useState<string[]>([baseUrl]);
 	const [message, setMessage] = useState<string | undefined>(undefined);
 	const [captionFormat, setCaptionFormat] = useState<string>("txt");
@@ -47,7 +49,7 @@ function App() {
 	const [captionText, setCaptionText] = useState<string | undefined>(undefined);
 
 	async function fetchAndSetInstances() {
-		const res = await fetch("https://api.invidious.io/instances.json");
+		const res = await fetch("https://api.invidious.io/instances.json?sort_by=health");
 		let newInstances: InstanceResponse[] = await res.json();
 		newInstances = newInstances.filter((instance) => {
 			const p = instance[1];
@@ -60,6 +62,12 @@ function App() {
 	useEffect(() => {
 		fetchAndSetInstances();
 	}, []);
+	useEffect(() => {
+		if (!instanceList.includes(DEFAULT_INSTANCE)) {
+			console.log("instance list changed", instanceList[0])
+			setBaseUrl(instanceList[0])
+		}
+	}, [instanceList])
 
 	useEffect(() => {
 		if (!captionText) {
@@ -220,14 +228,14 @@ function App() {
 			<div className="flex self-center w-full flex-col  gap-4  p-4 md:py-8 max-w-2xl max-h-full overflow-y-auto">
 				<div className="flex gap-4">
 					<div className="w-full">
-						<Select defaultValue={baseUrl} onValueChange={setBaseUrl}>
+						<Select value={baseUrl} onValueChange={setBaseUrl}>
 							<SelectTrigger>
 								<SelectValue placeholder="Select an Instance" />
 							</SelectTrigger>
 							<SelectContent>
 								{instanceList?.map((instance) => (
-									<SelectItem key={instance} value={instance}>
-										{instance.toString()}
+									<SelectItem defaultChecked key={instance} value={instance}>
+										{instance}
 									</SelectItem>
 								))}
 							</SelectContent>
