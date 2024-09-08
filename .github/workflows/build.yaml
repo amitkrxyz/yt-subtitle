@@ -10,11 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build static files
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    - run: npm ci
-    - run: npm run build
+    - uses: oven-sh/setup-bun@v2
+    - run: bun install
+    - run: bun run build
 
     - name: Init a new repo in dist folder and commite generated files
       run: |
