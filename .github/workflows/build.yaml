@@ -22,6 +22,7 @@ jobs:
     - name: Init a new repo in dist folder and commite generated files
       run: |
         cd dist/
+        git init
         git config --local user.email "action@github.com"
         git config --local user.name "Github Action"
         git commit -a -m 'build'
